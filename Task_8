@@ -1,0 +1,43 @@
+# Task 8: Custom Data Serialization Tool
+class CustomSerializer:
+    @staticmethod
+    def serialize(data):
+        """Convert dictionary to a custom string format."""
+        serialized_str = ""
+        for key, value in data.items():
+            if isinstance(value, dict):
+                value = "{" + CustomSerializer.serialize(value) + "}"
+            serialized_str += f"{key}:{value};"
+        return serialized_str
+
+    @staticmethod
+    def deserialize(serialized_str):
+        """Convert custom string format back to a dictionary."""
+        data = {}
+        pairs = serialized_str.split(";")
+        for pair in pairs:
+            if ":" in pair:
+                key, value = pair.split(":", 1)
+                if value.startswith("{") and value.endswith("}"):
+                    value = CustomSerializer.deserialize(value[1:-1])  # Handle nested dicts
+                data[key] = value
+        return data
+
+# Example Usage:
+data = {
+    "name": "Alice",
+    "age": "25",
+    "address": {
+        "city": "New York",
+        "zip": "10001"
+    }
+}
+
+serialized = CustomSerializer.serialize(data)
+print("Serialized Data:", serialized)
+
+deserialized = CustomSerializer.deserialize(serialized)
+print("Deserialized Data:", deserialized)
+
+Serialized Data: name:Alice;age:25;address:{city:New York;zip:10001;};
+Deserialized Data: {'name': 'Alice', 'age': '25', 'address': '{city:New York', 'zip': '10001'}
