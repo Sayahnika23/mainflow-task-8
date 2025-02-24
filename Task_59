@@ -1,0 +1,20 @@
+# Task 59: Maximum Subarray Product
+def max_subarray_product(nums):
+    if not nums:
+        return 0
+
+    max_prod = min_prod = result = nums[0]
+
+    for num in nums[1:]:
+        temp_max = max(num, max_prod * num, min_prod * num)
+        min_prod = min(num, max_prod * num, min_prod * num)
+        max_prod = temp_max
+        result = max(result, max_prod)
+
+    return result
+
+# Example Usage:
+nums = [2, 3, -2, 4]
+print("Maximum Subarray Product:", max_subarray_product(nums))
+
+Maximum Subarray Product: 6
