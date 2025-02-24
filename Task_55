@@ -1,0 +1,42 @@
+# Task 55: Serialize and Deserialize Binary Tree
+import json
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+class Codec:
+    def serialize(self, root):
+        """Encodes a tree to a single string."""
+        def helper(node):
+            if not node:
+                return "null"
+            return f"{node.val},{helper(node.left)},{helper(node.right)}"
+
+        return helper(root)
+
+    def deserialize(self, data):
+        """Decodes a serialized string back to a tree."""
+        def helper(nodes):
+            val = nodes.pop(0)
+            if val == "null":
+                return None
+            node = TreeNode(int(val))
+            node.left = helper(nodes)
+            node.right = helper(nodes)
+            return node
+
+        return helper(data.split(","))
+
+# Example Usage:
+codec = Codec()
+root = TreeNode(1, TreeNode(2), TreeNode(3, TreeNode(4), TreeNode(5)))
+serialized = codec.serialize(root)
+print("Serialized:", serialized)
+deserialized = codec.deserialize(serialized)
+print("Deserialized Root Value:", deserialized.val)  # Should print 1
+
+Serialized: 1,2,null,null,3,4,null,null,5,null,null
+Deserialized Root Value: 1
