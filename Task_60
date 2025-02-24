@@ -1,0 +1,31 @@
+# Task 60: Find All Paths in a Graph
+def find_all_paths(graph, start, end, path=None):
+    if path is None:
+        path = []
+
+    path.append(start)
+
+    if start == end:
+        return [path[:]]  # Return a copy of the current path
+
+    paths = []
+    for neighbor in graph.get(start, []):
+        if neighbor not in path:  # Avoid cycles
+            paths.extend(find_all_paths(graph, neighbor, end, path))
+
+    path.pop()  # Backtrack to explore other paths
+    return paths
+
+# Example Usage:
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D'],
+    'C': ['D'],
+    'D': ['E'],
+    'E': []
+}
+
+start, end = 'A', 'E'
+print("All Paths:", find_all_paths(graph, start, end))
+
+All Paths: [['A', 'B', 'D', 'E'], ['A', 'B', 'C', 'D', 'E']]
