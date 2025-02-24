@@ -1,0 +1,54 @@
+# Task 56: Maximum Flow in a Graph (Ford-Fulkerson)
+class Graph:
+    def __init__(self, size):
+        self.size = size
+        self.graph = [[0] * size for _ in range(size)]
+
+    def add_edge(self, u, v, capacity):
+        self.graph[u][v] = capacity
+
+    def dfs(self, source, sink, visited, parent):
+        visited[source] = True
+        if source == sink:
+            return True
+        for neighbor, capacity in enumerate(self.graph[source]):
+            if not visited[neighbor] and capacity > 0:
+                parent[neighbor] = source
+                if self.dfs(neighbor, sink, visited, parent):
+                    return True
+        return False
+
+    def ford_fulkerson(self, source, sink):
+        max_flow = 0
+        parent = [-1] * self.size
+
+        while self.dfs(source, sink, [False] * self.size, parent):
+            path_flow = float('Inf')
+            s = sink
+            while s != source:
+                path_flow = min(path_flow, self.graph[parent[s]][s])
+                s = parent[s]
+
+            max_flow += path_flow
+
+            v = sink
+            while v != source:
+                u = parent[v]
+                self.graph[u][v] -= path_flow
+                self.graph[v][u] += path_flow
+                v = parent[v]
+
+        return max_flow
+
+# Example Usage:
+g = Graph(4)
+g.add_edge(0, 1, 10)
+g.add_edge(0, 2, 5)
+g.add_edge(1, 2, 15)
+g.add_edge(1, 3, 10)
+g.add_edge(2, 3, 10)
+
+source, sink = 0, 3
+print("Maximum Flow:", g.ford_fulkerson(source, sink))
+
+Maximum Flow: 15
